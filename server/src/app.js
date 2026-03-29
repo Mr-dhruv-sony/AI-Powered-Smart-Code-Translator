@@ -8,8 +8,8 @@ const app = express();
 // Allow React frontend to talk to this backend
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
-    credentials: true,
+    origin: process.env.CLIENT_URL || "*",
+    credentials: false,
   })
 );
 
