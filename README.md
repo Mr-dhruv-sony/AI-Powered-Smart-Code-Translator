@@ -68,6 +68,13 @@ Response → { success: true, data: result }
 
 ---
 
+
+## 🌐 Live Demo
+
+- **Frontend:** https://ai-powered-smart-code-translator.vercel.app
+- **Backend:** https://ai-powered-smart-code-translator.onrender.com
+
+
 # 🤖 AI Operations
 
 | Operation | Endpoint | Input | Output |
