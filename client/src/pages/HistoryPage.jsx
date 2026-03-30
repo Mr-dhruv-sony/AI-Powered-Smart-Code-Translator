@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
 import HistoryList from "../components/HistoryList.jsx";
 import CodeEditor from "../components/CodeEditor.jsx";
@@ -16,10 +16,10 @@ function HistoryPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [selectedEntry, setSelectedEntry] = useState(null);
 
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async (page = currentPage) => {
     try {
       setLoading(true);
-      const data = await getHistory(currentPage, 8);
+      const data = await getHistory(page, 8);
       setEntries(data.entries);
       setTotalPages(data.totalPages);
     } catch {
@@ -27,11 +27,11 @@ function HistoryPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage]);
 
   useEffect(() => {
-    fetchHistory();
-  }, [currentPage]);
+    fetchHistory(currentPage);
+  }, [currentPage, fetchHistory]);
 
   const handleDelete = async (id) => {
     try {

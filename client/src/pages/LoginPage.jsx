@@ -2,12 +2,13 @@ import { useState, useContext } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import toast from "react-hot-toast";
-import { AuthContext } from "../context/AuthContext.jsx";
+import { AuthContext } from "../context/AuthContext.js";
 import { register, emailLogin, googleLogin } from "../services/authService.js";
 
 function LoginPage() {
   const { user, login } = useContext(AuthContext);
   const navigate = useNavigate();
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -54,8 +55,8 @@ function LoginPage() {
       login(result.token, result.user);
       toast.success(`Welcome, ${result.user.name}!`);
       navigate("/");
-    } catch {
-      toast.error("Google login failed. Please try again.");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Google login failed. Please try again.");
     }
   };
 
@@ -116,15 +117,19 @@ function LoginPage() {
         </div>
 
         <div className="google-btn-wrapper">
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={() => toast.error("Google login failed.")}
-            theme="outline"
-            shape="rectangular"
-            size="large"
-            text="continue_with"
-            width="300"
-          />
+          {googleClientId ? (
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => toast.error("Google login failed.")}
+              theme="outline"
+              shape="rectangular"
+              size="large"
+              text="continue_with"
+              width="300"
+            />
+          ) : (
+            <p>Google sign-in is unavailable until `VITE_GOOGLE_CLIENT_ID` is configured.</p>
+          )}
         </div>
       </div>
     </div>

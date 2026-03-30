@@ -79,29 +79,49 @@ export const googleLogin = async (credential) => {
   // 1. Verify the token is genuine with Google
   const googleUser = await verifyGoogleToken(credential);
 
-  // 2. Find existing user or create new one (upsert)
-  const user = await User.findOneAndUpdate(
-    { googleId: googleUser.googleId },
-    {
+  // 2. Resolve account by Google ID and email to avoid duplicate users
+  const [userByGoogleId, userByEmail] = await Promise.all([
+    User.findOne({ googleId: googleUser.googleId }),
+    User.findOne({ email: googleUser.email }),
+  ]);
+
+  if (userByGoogleId && userByEmail && userByGoogleId.id !== userByEmail.id) {
+    const error = new Error("This Google account cannot be linked to the existing email.");
+    error.statusCode = 409;
+    throw error;
+  }
+
+  const user = userByGoogleId || userByEmail;
+
+  if (user) {
+    user.googleId = googleUser.googleId;
+    user.email = googleUser.email;
+    user.name = googleUser.name;
+    user.picture = googleUser.picture;
+    user.lastLogin = new Date();
+    await user.save();
+  } else {
+    await User.create({
       googleId: googleUser.googleId,
       email: googleUser.email,
       name: googleUser.name,
       picture: googleUser.picture,
       lastLogin: new Date(),
-    },
-    { upsert: true, new: true, returnDocument: "after" }
-  );
+    });
+  }
+
+  const resolvedUser = user || (await User.findOne({ googleId: googleUser.googleId }));
 
   // 3. Generate token and return
-  const token = generateToken(user);
+  const token = generateToken(resolvedUser);
 
   return {
     token,
     user: {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      picture: user.picture,
+      id: resolvedUser._id,
+      name: resolvedUser.name,
+      email: resolvedUser.email,
+      picture: resolvedUser.picture,
     },
   };
 };

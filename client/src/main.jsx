@@ -9,6 +9,10 @@ import "./index.css";
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
 
+if (!googleClientId) {
+  console.warn("VITE_GOOGLE_CLIENT_ID is not set. Google sign-in will be unavailable.");
+}
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <GoogleOAuthProvider clientId={googleClientId}>

@@ -166,6 +166,7 @@ Create `.env` inside **server/**:
 ```env
 PORT=5000
 CLIENT_URL=http://localhost:5173
+CLIENT_URLS=http://localhost:5173,https://ai-powered-smart-code-translator.vercel.app
 MONGODB_URI=your_mongodb_atlas_connection_string
 JWT_SECRET=your_super_secret_jwt_key
 JWT_EXPIRES_IN=7d
@@ -178,6 +179,17 @@ Create `.env` inside **client/**:
 ```env
 VITE_API_URL=http://localhost:5000/api
 VITE_GOOGLE_CLIENT_ID=your_google_oauth_client_id
+```
+
+For Google sign-in, create a Google OAuth Web client and add these authorized JavaScript origins:
+
+- `http://localhost:5173`
+- your deployed frontend URL
+
+For hosted deployments, set `CLIENT_URLS` on the backend to a comma-separated list of allowed frontend origins. Example:
+
+```env
+CLIENT_URLS=http://localhost:5173,https://ai-powered-smart-code-translator.vercel.app
 ```
 
 ---

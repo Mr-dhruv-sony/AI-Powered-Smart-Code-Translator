@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext.jsx";
+import { AuthContext } from "../context/AuthContext.js";
 import { logout as logoutAPI } from "../services/authService.js";
 import toast from "react-hot-toast";
 
